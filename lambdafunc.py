@@ -15,7 +15,7 @@ def csv2json(s3obj):
 	fieldnames = ("opponent","isHome","date","day","time")
 	reader = csv.DictReader(csvfile,fieldnames)
 	
-	print("inside the function")
+	print("inside the csv2json function")
 	#print(csvfile.read())
 	#print(csvfile,jsonfile,fieldnames,reader)
 	print("going into loop")
@@ -25,7 +25,23 @@ def csv2json(s3obj):
 		#print(json.dumps(row))
 	jsonfile.close()
 	return '/tmp/mbb.json', jsonfile
-     
+    
+def upjson2dynamo(filepath, tablename):
+	print("inside the upload function")
+	#tablename = "MBB-Schedule"
+	jsonfile = open(filepath,'r')
+		
+	dynamodb = boto3.resource('dynamodb')
+	table = dynamodb.Table(tablename)
+	
+	with table.batch_writer() as batch:
+		for i in jsonfile.readlines():
+			item = "Item=" + str(i)
+			batch.put_item(json.loads(i))
+			print("Uploaded game: ", str(i), " to table")
+
+
+
 def lambda_handler(event, context):
 	for record in event['Records']:
 		bucket = record['s3']['bucket']['name']
@@ -37,11 +53,12 @@ def lambda_handler(event, context):
 	upload_path, jsonfile = csv2json(download_path)
 	#s3_client.upload_file('/tmp/mbb.json', bucket, 'mbb.json')
 	print('Function finished - 1')
-	jsonfile2 = open('/tmp/mbb.json', 'r')
-	with open('/tmp/mbb.json', 'r') as myfile:
-		data=myfile.read()
-	print(data)
-	print("After read")
-	print(upload_path,jsonfile,jsonfile2)
+	#jsonfile2 = open('/tmp/mbb.json', 'r')
+	#with open('/tmp/mbb.json', 'r') as myfile:
+	#	data=myfile.read()
+	#print(data)
+	#print("After read")
+	#print(upload_path,jsonfile,jsonfile2)
+	upjson2dynamo(upload_path,"MBB-Schedule")	
 	print("Function finished - 2")
 	
