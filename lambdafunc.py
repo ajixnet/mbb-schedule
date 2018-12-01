@@ -36,9 +36,12 @@ def upjson2dynamo(filepath, tablename):
 	
 	with table.batch_writer() as batch:
 		for i in jsonfile.readlines():
-			item = "Item=" + str(i)
-			batch.put_item(json.loads(i))
-			print("Uploaded game: ", str(i), " to table")
+			batch.put_item(Item=json.loads(i))
+			#print("Uploaded game: ", str(i), " to table")
+	
+	#for i in jsonfile.readlines():
+	#	table.put_item(Item=json.loads(i))
+	#	print("Uploaded game: ", str(i), " to table")
 
 
 
