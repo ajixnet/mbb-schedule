@@ -20,10 +20,10 @@ def csv2json(s3obj):
 	#print(csvfile,jsonfile,fieldnames,reader)
 	print("going into loop")
 	for row in reader:
-		json.dump(row, jsonfile)
+		jsonfile.write(json.dumps(row))
 		jsonfile.write('\n')
-		print(json.dumps(row))
-	#jsonfile.close()
+		#print(json.dumps(row))
+	jsonfile.close()
 	return '/tmp/mbb.json', jsonfile
      
 def lambda_handler(event, context):
