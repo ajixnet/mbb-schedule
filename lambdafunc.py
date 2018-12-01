@@ -10,7 +10,7 @@ s3_client = boto3.client('s3')
 
 def csv2json(s3obj):
 	csvfile = open(s3obj,'r')
-	jsonfile = open('/tmp/mbb.json','w')
+	jsonfile = open('/tmp/mbb.json','a')
 	
 	fieldnames = ("opponent","isHome","date","day","time")
 	reader = csv.DictReader(csvfile,fieldnames)
@@ -22,7 +22,7 @@ def csv2json(s3obj):
 	for row in reader:
 		json.dump(row, jsonfile)
 		jsonfile.write('\n')
-		print(row)
+		print(json.dumps(row))
 	#jsonfile.close()
 	return '/tmp/mbb.json', jsonfile
      
